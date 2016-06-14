@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>打字游戏2</title>
+	<style>
+	.box{
+		width:100%;
+		height:650px;
+		/*margin:80px6 auto;*/
+		border:1px solid #ccc;
+		position: relative;
+		overflow: hidden;
+		background: #aabbcc;	
+		background: url('./image/2.jpg') ;
+	}
+	/*.block{
+        	width:58px;
+        	height:58px;
+			margin:0 1px 1px 0;
+			float: left;
+    		background: #aa8967;
+    		text-align: center;
+    		line-height: 58px;
+		}*/
+	.zi{
+		width:152px;
+		height:156px;
+		/*border-radius:5px;*/
+		/*background: red;
+		text-align:center;*/
+		line-height: 60px;
+		color:white;
+		/*margin:1px 1px;
+		padding:1px 1px;*/
+		position: absolute;
+		opacity:0.8;
+		font-size: 60px;
+		background: url(./image/qiu55.png) no-repeat -4px -11px;
+		background-size: 152px 152px;
+
+	}
+	.start{
+		width:120px;
+		height:60px;
+		border-radius:5px;
+		border:1px solid #ccc;
+		text-align:center;
+		line-height: 60px;
+		color:#fff;
+		margin:1px 1px;
+		position: absolute;
+		right:10px;
+		bottom:70px;
+		opacity:0.8;
+		font-size: 24px;
+		float:right;
+		display: inline-block;
+		cursor: pointer;
+		/*background: url(./image/444.jpg) no-repeat -4px -11px;*/
+	}
+	.img{
+		position: absolute;
+		right:10px;
+		bottom:100px;
+
+		background: url('./image/qiu5.png') no-repeat;
+		background-size: 256px 269px;
+		width: 256px;
+		height: 269px;
+
+	}
+	.img2{
+		position: absolute;
+		left:0px;
+		bottom:0px;
+
+		background: url('./image/qiu6.png') no-repeat;
+		background-size: 256px 269px;
+		width: 256px;
+		height: 269px;
+
+	}
+	</style>
+</head>
+<body>
+	<div class='box'></div>
+	<div class="img"></div>
+	<div class='start'>开始游戏</div>
+		<div class="img2"></div>
+</body>
+<script src="./jquery工程文件/jquery-1.12.0.js"></script>
+<script>
+
+
+
+
+	var boxs=document.querySelector(".box");
+	var zimujihe={};
+	var sum=5;
+	var starts=document.querySelector(".start");
+
+
+
+	/////布景
+		// var render = function(){
+				
+		// 		var rows=10,
+		// 	    i=0,
+		// 	    j=0;
+		// 	for(;i<rows;i++){
+		// 		for(j=0;j<rows;j++){
+		// 		var islei = Math.random()>0.9;
+		// 		 // $(document).on('contextmenu',false)
+		// 		 $('<div>')
+		// 		 .attr('id',i+'-'+j)
+		// 		 .addClass(function(){
+		// 		 	return 'block '+(islei?'':'');
+		// 		 })
+		// 		 .text(function(){
+		// 		 	return islei?'':'';
+		// 		 })
+		// 		 .appendTo('.box')
+		// 		}
+		// 	}
+
+		// 	$('.box').width(59*rows).height(59*rows)
+		// 	}
+			
+  //          render();
+	
+	var create=function(){
+		do{
+			var zimu=String.fromCharCode(Math.floor(Math.random()*25+97));
+		}while(zimujihe[zimu])//去重
+		
+		var el=document.createElement("div");
+		el.className="zi";
+		el.innerHTML=zimu;
+		boxs.appendChild(el);
+		// var r=Math.floor(Math.random()*255);
+		// var g=Math.floor(Math.random()*255);
+		// var b=Math.floor(Math.random()*255);
+		// el.style.backgroundColor="rgb("+r+","+g+","+b+")";
+		el.style.left=Math.random()*(boxs.offsetWidth-el.offsetWidth)+"px";
+		var random=Math.ceil(Math.random()*5);
+
+		zimujihe[zimu]={top:0,yuanshu:el,off:random};
+		
+
+	}
+	for(var j=0;j<sum;j++){
+		create();
+	}
+	
+	var remove=function(zimu){
+		var el=zimujihe[zimu].yuanshu;
+		el.parentElement.removeChild(el);
+		delete zimujihe[zimu];
+
+	}
+
+	document.onkeyup=function(e){
+		if(e.keyCode===32){
+			toggleGame();
+			return;
+		}
+		var key=String.fromCharCode(e.keyCode).toLowerCase();
+		if (zimujihe[key]){
+			remove(key);
+			create();
+
+		}
+
+	}
+
+
+	var boxH=boxs.offsetHeight;
+	var diao=function(){
+		var arr=[];
+		for(var i in zimujihe){	
+		    var data=zimujihe[i];		
+			var el=data.yuanshu;
+			var offs=data.off;
+			data.top+=offs;
+			el.style.top=data.top+"px";
+			if(data.top>(boxH-40)){
+				arr.push(i);
+
+			}
+		}
+		if(arr.length!==0){
+			remove(arr[0]);
+			create();
+		}
+
+	}
+    var timerId=setInterval(diao,40);
+  
+  var  toggleGame=function(){
+    if(timerId){  
+   	 	clearInterval(timerId)
+    	timerId=null;
+
+	}else{
+		timerId=setInterval(diao,40);
+	}
+}
+
+//点击控制
+	// document.onclick=function(){
+	// if(timerId){ 
+	// 	clearInterval(timerId)
+ //    	timerId=null;
+	// }else{
+	// 	timerId=setInterval(diao,20);
+	// }
+   	 	
+	// }
+
+
+starts.onclick=function(){
+	if(timerId){ 
+		clearInterval(timerId)
+		starts.innerHTML="开始游戏";
+    	timerId=null;
+	}else{
+		clearInterval(timerId)
+		timerId=setInterval(diao,40);
+		starts.innerHTML="结束游戏";
+
+	}
+   	 	
+	}
+
+</script>
+</html>
